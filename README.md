@@ -33,18 +33,19 @@ Set `OPENAI_API_KEY` in the environment where the Express server runs, then rest
 
 Without an AI key, the API returns its built-in educational fallback answers.
 
-## Deploy with Streamlit Cloud
+## Deploy the API with Vercel
 
 `localhost` only works when the API and Streamlit are running on the same computer. A Streamlit Cloud app needs a public API URL.
 
-1. Deploy the included `render.yaml` as a **Blueprint** on Render. Set `OPENAI_API_KEY` in the Render service environment variables if you want live AI answers.
-2. Confirm the deployed API health URL opens in a browser: `https://your-render-service.onrender.com/api/health`.
-3. In Streamlit Cloud, open **App settings → Secrets** and add:
+1. In Vercel, import this GitHub repository and set the **Root Directory** to `edututor-ai/server`.
+2. Deploy it. Vercel will create a URL such as `https://edututor-api.vercel.app`.
+3. In Vercel → **Settings → Environment Variables**, add `OPENAI_API_KEY` if you want live AI answers, then redeploy.
+4. In Streamlit Cloud, open **App settings → Secrets** and add:
 
    ```toml
-   EDUTUTOR_API_BASE = "https://your-render-service.onrender.com/api"
+   EDUTUTOR_API_BASE = "https://your-vercel-project.vercel.app/api"
    ```
 
-4. Save the secret and reboot the Streamlit app.
+5. Save the secret and reboot the Streamlit app.
 
 Never use `http://localhost:5000/api` in Streamlit Cloud: it points to the Streamlit Cloud container, where the Express API is not running.

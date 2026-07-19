@@ -1,4 +1,6 @@
-const { getLocalTutorAnswer } = require('../../../../routes/api');
+// On Vercel this function lives at server/api/tutor/index.js. The local
+// fallback answers live beside it at server/routes/api.js.
+const { getLocalTutorAnswer } = require('../../routes/api');
 
 async function getExternalTutorAnswer(question) {
   // Keep behavior consistent with routes/api.js
@@ -66,4 +68,3 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
-
