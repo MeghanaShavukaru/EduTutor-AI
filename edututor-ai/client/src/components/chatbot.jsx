@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+
 function Chatbot() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -14,7 +16,7 @@ function Chatbot() {
     setInput('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/tutor', { question: input });
+      const res = await axios.post(`${API_BASE}/tutor`, { question: input });
       const botMsg = { role: 'bot', text: res.data.answer || '❌ Error from AI API.' };
       setChat((prev) => [...prev, botMsg]);
     } catch {

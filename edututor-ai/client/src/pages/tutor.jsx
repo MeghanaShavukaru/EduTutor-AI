@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FaMicrophone } from 'react-icons/fa';
 import './tutor.css'; // optional for extra styling
 
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+
 const TutorPage = () => {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -14,7 +16,7 @@ const TutorPage = () => {
     if (!question.trim()) return;
     setAnswer('Thinking...');
     try {
-      const res = await fetch('http://localhost:5000/api/tutor', {
+      const res = await fetch(`${API_BASE}/tutor`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question }),

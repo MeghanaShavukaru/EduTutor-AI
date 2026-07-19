@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+
 const AITutor = () => {
   const [input, setInput] = useState('');
   const [response, setResponse] = useState('');
@@ -10,7 +12,7 @@ const AITutor = () => {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/tutor', {
+      const res = await fetch(`${API_BASE}/tutor`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: input })

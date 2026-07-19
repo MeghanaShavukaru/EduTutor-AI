@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
 
 const AskTutor = () => {
   const [question, setQuestion] = useState('');
@@ -76,4 +76,3 @@ const AskTutor = () => {
 };
 
 export default AskTutor;
-

@@ -1,0 +1,6 @@
+{
+  "outputDirectory": "edututor-ai/client/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

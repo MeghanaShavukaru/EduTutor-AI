@@ -12,7 +12,6 @@
 - 🌈 **Modern Neon UI** – Built with Tailwind + React + Vite
 - 💬 Floating chatbot on every page
 - ☁️ Backend with Express + EJS views
-- 🔗 Deployed frontend on Vercel and backend on Render (optional)
 
 ---
 

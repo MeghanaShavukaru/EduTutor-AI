@@ -1,0 +1,7 @@
+{
+  "name": "edututor-ai",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix edututor-ai/client ci && npm --prefix edututor-ai/client run build"
+  }
+}

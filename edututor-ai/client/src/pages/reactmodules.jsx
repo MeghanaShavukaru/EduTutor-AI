@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FaGraduationCap } from 'react-icons/fa';
 
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+
 const modules = [
   {
     id: 1,
@@ -43,7 +45,7 @@ const ReactModules = () => {
     setResponse('Thinking...');
 
     try {
-      const res = await fetch('http://localhost:5000/api/tutor', {
+      const res = await fetch(`${API_BASE}/tutor`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: input })
