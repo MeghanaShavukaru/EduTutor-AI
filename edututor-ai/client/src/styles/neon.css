@@ -1,0 +1,44 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #000;
+  color: white;
+}
+
+.text-neon {
+  color: #39ff14;
+}
+
+.border-neon {
+  border-color: #39ff14;
+}
+
+.glow {
+  text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
+}
+
+.glow-box {
+  border: 1px solid #39ff14;
+  box-shadow: 0 0 15px #39ff14;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.neon-button {
+  background: transparent;
+  color: #39ff14;
+  border: 2px solid #39ff14;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+.neon-button:hover {
+  background: #39ff14;
+  color: #000;
+  box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+}
