@@ -2,17 +2,76 @@ import os
 import requests
 import streamlit as st
 
-API_BASE = os.getenv("VITE_API_BASE", "http://localhost:5000/api").rstrip("/")
+# This is intentionally a server-side environment variable. Do not put an
+# OpenAI key in Streamlit or in the React client; the Express API owns it.
+# Streamlit Cloud reads this value from App settings > Secrets.
+API_BASE = (
+    st.secrets.get("EDUTUTOR_API_BASE")
+    or os.getenv("EDUTUTOR_API_BASE")
+    or ""
+).rstrip("/")
+IS_CONFIGURED = bool(API_BASE)
 
 st.set_page_config(page_title="EduTutor AI (Streamlit)", layout="centered")
 
 st.title("EduTutor AI")
-st.caption(f"Backend: {API_BASE}")
+st.caption("Ask a question and get an answer from the EduTutor backend.")
+
+
+def get_tutor_answer(question: str) -> str:
+    """Send a question to the shared EduTutor backend."""
+    if not IS_CONFIGURED:
+        raise RuntimeError("The deployed tutor API has not been configured.")
+    response = requests.post(
+        f"{API_BASE}/tutor",
+        json={"question": question},
+        timeout=30,
+    )
+    response.raise_for_status()
+    data = response.json()
+    return data.get("answer") or "I couldn't generate an answer right now. Please try again."
+
+
+def submit_question(question: str) -> None:
+    """Store and display one user/assistant exchange."""
+    question = question.strip()
+    if not question:
+        return
+
+    st.session_state.messages.append({"role": "user", "content": question})
+    with st.chat_message("user"):
+        st.markdown(question)
+
+    with st.chat_message("assistant"):
+        with st.spinner("Getting answer..."):
+            try:
+                answer = get_tutor_answer(question)
+            except RuntimeError as error:
+                answer = (
+                    "⚙️ The tutor API URL is not configured. In Streamlit Cloud, open "
+                    "**App settings → Secrets** and add `EDUTUTOR_API_BASE` with your "
+                    "deployed API URL followed by `/api`."
+                )
+            except requests.RequestException as error:
+                answer = (
+                    "❌ I could not reach the tutor service. The public Streamlit app "
+                    "cannot use `localhost`; set `EDUTUTOR_API_BASE` to a deployed API.\n\n"
+                    f"Details: `{error}`"
+                )
+            except ValueError:
+                answer = "❌ The tutor service returned an invalid response."
+
+        st.markdown(answer)
+        st.session_state.messages.append({"role": "assistant", "content": answer})
 
 # Health check
 with st.sidebar:
     st.subheader("Health")
+    st.caption(API_BASE or "Tutor API not configured")
     if st.button("Check /api/health"):
+        if not IS_CONFIGURED:
+            st.warning("Add EDUTUTOR_API_BASE in Streamlit Cloud Secrets first.")
+            st.stop()
         try:
             r = requests.get(f"{API_BASE}/health", timeout=10)
             st.success(r.status_code == 200 and "✅ Connected" or f"⚠️ Status: {r.status_code}")
@@ -34,29 +93,7 @@ for msg in st.session_state.messages:
 prompt = st.chat_input("Ask the tutor...")
 
 if prompt:
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
-
-    with st.chat_message("assistant"):
-        with st.spinner("Getting answer..."):
-            try:
-                resp = requests.post(
-                    f"{API_BASE}/tutor",
-                    json={"question": prompt},
-                    timeout=20,
-                    headers={"Content-Type": "application/json"},
-                )
-                data = resp.json() if resp.content else {}
-                answer = data.get("answer")
-
-                if not answer:
-                    answer = "I couldn't generate an answer right now. Please try again."
-            except Exception as e:
-                answer = f"❌ Tutor API error: {e}"
-
-            st.markdown(answer)
-            st.session_state.messages.append({"role": "assistant", "content": answer})
+    submit_question(prompt)
 
 # Quick actions
 st.divider()
@@ -68,6 +105,4 @@ examples = [
 ]
 for i, col in enumerate(cols):
     if col.button(examples[i]):
-        st.session_state.messages.append({"role": "user", "content": examples[i]})
-        st.rerun()
-
+        submit_question(examples[i])

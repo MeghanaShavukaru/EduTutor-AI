@@ -3,6 +3,10 @@ const axios = require('axios');
 const router = express.Router();
 const { generateStudyPlan } = require('../utils/learningPlanner');
 
+router.get('/health', (req, res) => {
+  res.json({ status: 'ok', service: 'edututor-api' });
+});
+
 async function getExternalTutorAnswer(question) {
   const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
   if (!apiKey) return null;
